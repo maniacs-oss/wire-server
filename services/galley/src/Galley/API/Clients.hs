@@ -10,16 +10,17 @@ module Galley.API.Clients
 
 import Data.Id
 import Galley.App
-import Galley.Types.Clients (clientIds)
+import Galley.Types.Clients (clientIds, fromUserClients)
 import Network.Wai
 import Network.Wai.Predicate hiding (setStatus)
 import Network.Wai.Utilities
 
-import qualified Galley.Data as Data
+import qualified Galley.Data         as Data
+import qualified Galley.Intra.Client as Intra
 
 getClients :: UserId -> Galley Response
 getClients usr = do
-    clts <- Data.lookupClients [usr]
+    clts <- fromUserClients <$> Intra.lookupClients [usr]
     return . json $ clientIds usr clts
 
 addClient :: UserId ::: ClientId -> Galley Response

@@ -175,6 +175,11 @@ sitemap o = do
     post "/i/users/blacklist" (continue addBlacklist) $
         param "email" ||| param "phone"
 
+    get "/i/clients/" (continue internalListClients) $
+      accept "application" "json"
+      .&. param "ids"
+
+
     -- /users -----------------------------------------------------------------
 
     get "/users/api-docs"
@@ -1063,6 +1068,12 @@ updateClient (req ::: usr ::: clt ::: _) = do
 
 listClients :: UserId ::: JSON -> Handler Response
 listClients (usr ::: _) = json <$> lift (API.lookupClients usr)
+
+internalListClients :: JSON ::: List UserId -> Handler Response
+internalListClients (_ ::: users) =
+    json <$> lift userClients
+  where userClient user = liftM2 (,) (return user) (Set.fromList <$> API.lookupClientIds user)
+        userClients = UserClients . Map.fromList <$> mapM userClient (fromList users)
 
 getClient :: UserId ::: ClientId ::: JSON -> Handler Response
 getClient (usr ::: clt ::: _) = lift $ do
