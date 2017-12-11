@@ -20,6 +20,8 @@ ARG executable
 COPY --from=builder /src/wire-server/services/brig/dist/${executable} /usr/bin/${exectuable}
 COPY --from=builder /src/wire-server/services/brig/deb/opt/brig/templates/ /usr/share/wire/templates/
 
+COPY --from=builder /src/wire-server/conf /etc/wire/brig/conf
+
 # ARGs are not available at runtime, create symlink at build time
 # more info: https://stackoverflow.com/questions/40902445/using-variable-interpolation-in-string-in-docker
 RUN ln -s /usr/bin/${executable} /usr/bin/service
