@@ -15,6 +15,7 @@ import Bilge.Retry
 import Brig.Types.Intra (ConnectionStatus (..), ReAuthUser (..))
 import Brig.Types.Connection (Relation (..))
 import Galley.App
+import Galley.Intra.Util
 import Galley.Options
 import Control.Monad (void, when)
 import Control.Monad.Catch (throwM)
@@ -96,17 +97,3 @@ getContactList uid = do
         . paths ["/i/users", toByteString' uid, "contacts"]
         . expect2xx
     cUsers <$> parseResponse (Error status502 "server-error") r
-
------------------------------------------------------------------------------
--- Helpers
-brigReq :: Galley (ByteString, Word16)
-brigReq = do
-    h <- encodeUtf8 <$> view (options.optBrig.epHost)
-    p <- portNumber . fromIntegral <$> view (options.optBrig.epPort)
-    return (h, p)
-
-call :: LT.Text -> (Request -> Request) -> Galley (Response (Maybe LB.ByteString))
-call n r = recovering x1 rpcHandlers (const (rpc n r))
-
-x1 :: RetryPolicy
-x1 = limitRetries 1
