@@ -8,8 +8,10 @@ module Galley.API.Clients
     , rmClient
     ) where
 
+import Control.Lens (view)
 import Data.Id
 import Galley.App
+import Galley.Options
 import Galley.Types.Clients (clientIds, fromUserClients)
 import Network.Wai
 import Network.Wai.Predicate hiding (setStatus)
@@ -20,7 +22,11 @@ import qualified Galley.Intra.Client as Intra
 
 getClients :: UserId -> Galley Response
 getClients usr = do
-    clts <- fromUserClients <$> Intra.lookupClients [usr]
+    isInternal <- view $ options . optSettings . setIntraListing
+    clts <- if isInternal then
+              fromUserClients <$> Intra.lookupClients [usr]
+            else
+              Data.lookupClients [usr]
     return . json $ clientIds usr clts
 
 addClient :: UserId ::: ClientId -> Galley Response
