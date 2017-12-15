@@ -11,19 +11,12 @@ import Bilge.RPC
 import Bilge.Retry
 import Galley.App
 import Galley.Options
-import Galley.Types (UserClients)
 import Control.Lens (view)
 import Control.Retry
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 (intercalate)
-import Data.ByteString.Conversion
-import Data.Id
 import Data.Misc (portNumber)
 import Data.Text.Encoding (encodeUtf8)
 import Data.Word (Word16)
-import Network.HTTP.Types.Method
-import Network.HTTP.Types.Status
-import Network.Wai.Utilities.Error
 import Util.Options
 
 import qualified Data.ByteString.Lazy as LB
