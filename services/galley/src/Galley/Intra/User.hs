@@ -11,32 +11,21 @@ module Galley.Intra.User
 import Bilge hiding (options, getHeader, statusCode)
 import Brig.Types.Connection (UserIds (..))
 import Bilge.RPC
-import Bilge.Retry
 import Brig.Types.Intra (ConnectionStatus (..), ReAuthUser (..))
 import Brig.Types.Connection (Relation (..))
 import Galley.App
 import Galley.Intra.Util
-import Galley.Options
 import Control.Monad (void, when)
 import Control.Monad.Catch (throwM)
-import Control.Lens (view)
-import Control.Retry
-import Data.ByteString (ByteString)
 import Data.ByteString.Char8 (pack, intercalate)
 import Data.ByteString.Conversion
 import Data.Char (toLower)
 import Data.Id
-import Data.Misc (portNumber)
-import Data.Text.Encoding (encodeUtf8)
-import Data.Word (Word16)
 import Network.HTTP.Client (HttpException (..), HttpExceptionContent (..))
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.Wai.Utilities.Error
-import Util.Options
 
-import qualified Data.ByteString.Lazy as LB
-import qualified Data.Text.Lazy as LT
 import qualified Network.HTTP.Client.Internal as Http
 
 getConnections :: UserId -> [UserId] -> Maybe Relation -> Galley [ConnectionStatus]
