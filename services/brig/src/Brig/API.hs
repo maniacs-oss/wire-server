@@ -177,7 +177,8 @@ sitemap o = do
 
     get "/i/clients/" (continue internalListClients) $
       accept "application" "json"
-      .&. param "ids"
+      .&. contentType "application" "json"
+      .&. request
 
 
     -- /users -----------------------------------------------------------------
@@ -1069,11 +1070,12 @@ updateClient (req ::: usr ::: clt ::: _) = do
 listClients :: UserId ::: JSON -> Handler Response
 listClients (usr ::: _) = json <$> lift (API.lookupClients usr)
 
-internalListClients :: JSON ::: List UserId -> Handler Response
-internalListClients (_ ::: users) =
-    json <$> lift userClients
-  where userClient user = liftM2 (,) (return user) (Set.fromList <$> API.lookupClientIds user)
-        userClients = UserClients . Map.fromList <$> mapM userClient (fromList users)
+internalListClients :: JSON ::: JSON ::: Request -> Handler Response
+internalListClients (_ ::: _ ::: req) = do
+  usrs' <- List <$> parseJsonBody req
+  json <$> lift (userClients usrs')
+    where userClient user = liftM2 (,) (return user) (Set.fromList <$> API.lookupClientIds user)
+          userClients usrs = UserClients . Map.fromList <$> mapM userClient (fromList usrs)
 
 getClient :: UserId ::: ClientId ::: JSON -> Handler Response
 getClient (usr ::: clt ::: _) = lift $ do
