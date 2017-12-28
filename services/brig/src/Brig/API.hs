@@ -175,7 +175,7 @@ sitemap o = do
     post "/i/users/blacklist" (continue addBlacklist) $
         param "email" ||| param "phone"
 
-    get "/i/clients/" (continue internalListClients) $
+    post "/i/clients/" (continue internalListClients) $
       accept "application" "json"
       .&. contentType "application" "json"
       .&. request
